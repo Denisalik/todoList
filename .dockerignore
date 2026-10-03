@@ -1,0 +1,16 @@
+target/
+.git/
+.gitignore
+*.iml
+.idea/
+.mvn/
+mvnw
+mvnw.cmd
+README.md
+
+Dockerfile
+docker-compose.yaml
+docker-compose-*.yaml
+.gitattributes
+Justfile
+openapi.json

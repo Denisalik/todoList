@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: todoList
+  datasource:
+    url: ${DB_URL}
+    username: ${PG_USER}
+    password: ${PG_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: todo-backend
+
+jwt:
+  publicKey: classpath:rsa/public.pem
+  privateKey: classpath:rsa/private.pem
+  REFRESH_TOKEN_TTL: 86400000
+  ACCESS_TOKEN_TTL: 1800000

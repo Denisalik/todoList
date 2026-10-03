@@ -1,0 +1,18 @@
+include:
+  - ./docker-compose-observability.yaml
+  - ./docker-compose-main.yaml
+
+services:
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    #for nginx to resolve all urls
+    depends_on:
+      - backend
+      - loki
+      - prometheus
+      - grafana
