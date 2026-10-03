@@ -1,0 +1,10 @@
+node_modules
+README.md
+.vscode
+
+.gitignore
+.dockerignore
+Dockerfile
+
+eslint.config.js
+biome.json
