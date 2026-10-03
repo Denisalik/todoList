@@ -25,3 +25,4 @@ dist-ssr
 
 # TanStack Router
 routeTree.gen.ts
+src/generated/

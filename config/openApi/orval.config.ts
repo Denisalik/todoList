@@ -1,3 +1,4 @@
+// @ts-ignore
 import { defineConfig } from 'orval';
 // todo
 // https://orval.dev/docs/guides/basics
@@ -6,7 +7,7 @@ import { defineConfig } from 'orval';
 // https://orval.dev/docs/guides/client-with-zod/
 export default defineConfig({
     client: {
-        input: './openapi.json',
+        input: '/app/openapi.json',
         output: {
             target: '/app/frontend/src/generated/openapi.ts',
             schemas: '/app/frontend/src/generated/model',
