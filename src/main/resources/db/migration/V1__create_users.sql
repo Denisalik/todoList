@@ -1,6 +1,7 @@
 CREATE TABLE roles (
     id   BIGSERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
+
     created_date    TIMESTAMP,
     updated_date    TIMESTAMP,
     version         BIGINT NOT NULL DEFAULT 0
@@ -12,6 +13,7 @@ CREATE TABLE users (
     email           VARCHAR(150) NOT NULL UNIQUE,
     hashed_password VARCHAR(255) NOT NULL,
     banned          BOOLEAN NOT NULL DEFAULT FALSE,
+
     created_date    TIMESTAMP,
     updated_date    TIMESTAMP,
     version         BIGINT NOT NULL DEFAULT 0

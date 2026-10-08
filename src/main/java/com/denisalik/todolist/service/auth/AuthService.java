@@ -5,18 +5,20 @@ import com.denisalik.todolist.dto.req.CreateUserRequest;
 import com.denisalik.todolist.dto.req.LoginRequest;
 import com.denisalik.todolist.dto.req.RegisterRequest;
 import com.denisalik.todolist.dto.res.AccessTokenResponse;
-import com.denisalik.todolist.entity.User;
 import com.denisalik.todolist.exception.AuthorityNotFoundException;
+import com.denisalik.todolist.exception.UserNotAuthenticatedException;
 import com.denisalik.todolist.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -40,9 +42,11 @@ public class AuthService {
 
     public AccessTokenResponse refresh(String token) {
         log.info("Refreshing access token...");
+        if (jwtService.isTokenExpired(token) || !jwtService.extractTokenType(token).equals("refresh")) {
+            throw new UserNotAuthenticatedException();
+        }
         String username = jwtService.extractUsername(token);
         userDetailsService.loadUserByUsername(username); // Validate user exists
-        log.info("User exists: {}", username);
 
         String accessToken = jwtService.generateToken(username, "access");
         log.info("Access token refreshed successfully for user: {}", username);
@@ -56,28 +60,21 @@ public class AuthService {
 
         String accessToken = jwtService.generateToken(req.username(), "access");
         String refreshToken = jwtService.generateToken(req.username(), "refresh");
-        response.addCookie(getRefreshTokenCookie(refreshToken));
+        response.addHeader(HttpHeaders.SET_COOKIE, getRefreshTokenCookie(refreshToken).toString());
         log.info("User {} successfully logged in", req.username());
 
         return new AccessTokenResponse(accessToken);
     }
 
-    public User me(String token) {
-        log.info("Fetching authenticated user details...");
-        String username = jwtService.extractUsername(token);
-        log.info("Authenticated user: {}", username);
-
-        return (User) userDetailsService.loadUserByUsername(username);
-
-    }
-
-    private Cookie getRefreshTokenCookie(String refreshToken) {
-        Cookie c = new Cookie("refreshToken", refreshToken);
-
-        c.setMaxAge(jwtConfiguration.REFRESH_TOKEN_TTL_IN_SECONDS());
-        c.setHttpOnly(true);
-        c.setPath("/");
-        return c;
+    private ResponseCookie getRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie
+                .from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Strict")
+                .path("/auth")
+                .maxAge(Duration.ofSeconds(jwtConfiguration.REFRESH_TOKEN_TTL_IN_SECONDS()))
+                .build();
     }
 
 }

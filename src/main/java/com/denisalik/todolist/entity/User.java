@@ -94,4 +94,21 @@ public class User implements UserDetails {
     public boolean isAccountNonLocked() {
         return !banned;
     }
+
+    public boolean isAdmin() {
+        return this.hasRole("ADMIN");
+    }
+
+    public boolean hasRole(String role) {
+        return this.hasAuthority("ROLE_" + role);
+    }
+
+    public boolean hasAuthority(String authority) {
+        return this.roles
+                .stream()
+                .anyMatch(a -> a
+                        .getName()
+                        .equals(authority)
+                );
+    }
 }

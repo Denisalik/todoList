@@ -58,14 +58,7 @@ public abstract class CommonGlobalExceptionHandler {
                         FieldError::getDefaultMessage,
                         (a, b) -> a  // keep first if duplicate
                 ));
-
-        ErrorResponse body = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                Instant.now(),
-                errors
-        );
-        return ResponseEntity.badRequest().body(body);
+        return build(HttpStatus.BAD_REQUEST, "Validation failed", errors);
     }
     // Malformed JSON body
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -87,9 +80,7 @@ public abstract class CommonGlobalExceptionHandler {
                         v -> v.getPropertyPath().toString(),
                         ConstraintViolation::getMessage
                 ));
-        ErrorResponse body = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(), "Validation failed", Instant.now(), errors);
-        return ResponseEntity.badRequest().body(body);
+        return build(HttpStatus.BAD_REQUEST, "Validation failed", errors);
     }
 
     // Missing required request param
@@ -111,8 +102,17 @@ public abstract class CommonGlobalExceptionHandler {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error occurred");
     }
 
-    protected ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {
+    protected ResponseEntity<ErrorResponse> build(HttpStatus status, String message, Instant timestamp, Map<String, String> errors) {
         log.warn("Handling exception {} with status {}", message, status);
-        return ResponseEntity.status(status).body(new ErrorResponse(status.value(), message));
+        ErrorResponse body = new ErrorResponse(status.value(), message, timestamp, errors);
+        return ResponseEntity
+                .status(status)
+                .body(body);
+    }
+    protected ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {
+        return build(status, message, Instant.now(), null);
+    }
+    protected ResponseEntity<ErrorResponse> build(HttpStatus status, String message, Map<String, String> errors) {
+        return build(status, message, Instant.now(), errors);
     }
 }

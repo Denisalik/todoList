@@ -33,5 +33,7 @@ build/
 
 src/main/resources/rsa/private.pem
 src/main/resources/rsa/public.pem
-data/
 openapi.json
+.env
+.env.*
+!.env.example

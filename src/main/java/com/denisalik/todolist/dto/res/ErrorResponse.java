@@ -8,8 +8,4 @@ public record ErrorResponse(
         String message,
         Instant timestamp,
         Map<String, String> errors  // field-level validation errors
-) {
-    public ErrorResponse(int status, String message) {
-        this(status, message, Instant.now(), null);
-    }
-}
+) {}

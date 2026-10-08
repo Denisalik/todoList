@@ -24,11 +24,24 @@ public class ToDoService {
         log.info("Getting all ToDo items");
         return toDoRepository.findAll();
     }
+    @Transactional(readOnly = true)
+    public List<ToDoItem> getToDoItemsByUser(String username) {
+        log.info("Getting all ToDo items created by {}", username);
+        return toDoRepository.findAllByCreatedBy(username);
+    }
 
     @Transactional(readOnly = true)
     public Optional<ToDoItem> getToDoItemById(Long id) {
         log.info("Getting ToDo item by id {}", id);
         return toDoRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public ToDoItem getToDoItemByIdOrException(Long id) {
+        log.info("Getting ToDo item by id {} or throw ToDoItemNotFoundException", id);
+        return toDoRepository
+                .findById(id)
+                .orElseThrow(() -> new ToDoItemNotFoundException(id));
     }
 
     public ToDoItem createToDoItem(ToDoItemRequest item) {
@@ -46,8 +59,7 @@ public class ToDoService {
     public ToDoItem updateToDoItem(Long id, ToDoItemRequest updated) {
         log.info("Updating ToDo item by id {}", id);
 
-        ToDoItem existing = toDoRepository.findById(id)
-                .orElseThrow(() -> new ToDoItemNotFoundException(id));
+        ToDoItem existing = getToDoItemByIdOrException(id);
 
         Optional.ofNullable(updated.title()).ifPresent(existing::setTitle);
         Optional.ofNullable(updated.description()).ifPresent(existing::setDescription);
@@ -60,8 +72,7 @@ public class ToDoService {
     public void deleteToDoItem(Long id) {
         log.info("Deleting ToDo item by id {}", id);
 
-        ToDoItem item = toDoRepository.findById(id)
-                .orElseThrow(() -> new ToDoItemNotFoundException(id));
+        ToDoItem item = getToDoItemByIdOrException(id);
 
         toDoRepository.delete(item);
         log.info("Successfully deleted ToDo item {}", item.getId());

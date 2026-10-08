@@ -23,6 +23,7 @@
     "@tanstack/react-query-devtools": "^5.104.0",
     "@tanstack/react-router": "^1.170.40",
     "@tanstack/zod-form-adapter": "^0.42.1",
+    "axios": "^1.20.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
     "react": "^19.3.0",

@@ -7,15 +7,18 @@ import com.denisalik.todolist.entity.User;
 import com.denisalik.todolist.exception.UserNotAuthenticatedException;
 import com.denisalik.todolist.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,15 +40,13 @@ public class AuthController {
     }
 
     @Operation(summary = "Refresh access token", description = "Refreshes the access token using refresh token")
+    @Parameter(name = "refreshToken", description = "Refresh token", required = true, allowEmptyValue = false)
     @PostMapping("/refresh")
-    public ResponseEntity<AccessTokenResponse> refresh(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    public ResponseEntity<AccessTokenResponse> refresh(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
             throw new UserNotAuthenticatedException();
         }
-        String refreshTokenRequest = authHeader.substring(7);
-        return ResponseEntity
-                .created(URI.create("/auth/refresh"))
-                .body(authService.refresh(refreshTokenRequest));
+        return ResponseEntity.ok(authService.refresh(refreshToken));
     }
 
     @Operation(summary = "Login", description = "Logs in a user using username and password")
@@ -58,12 +59,15 @@ public class AuthController {
 
     @Operation(summary = "Get current user", description = "Returns the current logged-in user(using access token)")
     @GetMapping("/me")
-    public ResponseEntity<User> me(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new UserNotAuthenticatedException();
-        }
-        String accessTokenResponse = authHeader.substring(7);
-        return ResponseEntity.ok(authService.me(accessTokenResponse));
+    public ResponseEntity<User> me(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(user);
+    }
+
+    @Operation(summary = "Get CSRF token", description = "Returns the CSRF token for the current session")
+    @GetMapping("/csrf")
+    public ResponseEntity<Void> csrf(CsrfToken token) {
+        token.getToken(); // This line is just to ensure the token is generated and sent in the response headers
+        return ResponseEntity.noContent().build();
     }
 
 }

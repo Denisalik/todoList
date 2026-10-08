@@ -1,6 +1,7 @@
 package com.denisalik.todolist.service.auth;
 
 import com.denisalik.todolist.config.jwt.JWTConfiguration;
+import com.denisalik.todolist.exception.UserNotAuthenticatedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
@@ -31,12 +32,16 @@ public class JWTService {
                 .compact();
     }
 
-    private Claims extractClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(jwtConfiguration.getPublicKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+    private Claims extractClaims(String token) throws UserNotAuthenticatedException {
+        try {
+            return Jwts.parser()
+                    .verifyWith(jwtConfiguration.getPublicKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception e) {
+            throw new UserNotAuthenticatedException();
+        }
     }
 
     public Date extractExpirationTime(String token) {

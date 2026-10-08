@@ -53,14 +53,10 @@ expose: ["\<port\>"] --> ports: ["\<port\>:\<port\>"]
 ```shell
 #Run your services
 just start
-#Get open-api.json
-just open-api-get
-#generate frontend/src/generated files
-just generate-ts
+#curl openapi.json and generate code using docker run orval
+just generate
 ```
 # TODO
-- add cors+csrf
+- add normal status handling for openAPI, not global exception handling
 - add frontend
 - add testcontainers tests
-- add OTEL
-- add AI for answering ToDo Items using button
