@@ -1,5 +1,6 @@
-package com.denisalik.todolist;
+package com.denisalik.todolist.testcontainers;
 
+import com.denisalik.todolist.TodoListApplication;
 import org.springframework.boot.SpringApplication;
 
 public class TestTodoListApplication {

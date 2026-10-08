@@ -5,6 +5,7 @@ import com.denisalik.todolist.dto.req.CreateUserRequest;
 import com.denisalik.todolist.dto.req.LoginRequest;
 import com.denisalik.todolist.dto.req.RegisterRequest;
 import com.denisalik.todolist.dto.res.AccessTokenResponse;
+import com.denisalik.todolist.entity.Role;
 import com.denisalik.todolist.exception.AuthorityNotFoundException;
 import com.denisalik.todolist.exception.UserNotAuthenticatedException;
 import com.denisalik.todolist.service.UserService;
@@ -33,7 +34,11 @@ public class AuthService {
 
     public AccessTokenResponse registration(RegisterRequest req, HttpServletResponse response) {
         log.info("Creating user with username: {}", req.username());
-        List<Long> roles = List.of(userService.getAuthorityByName("ROLE_USER").orElseThrow(AuthorityNotFoundException::new).getId());
+        List<Long> roles = userService
+                .getAuthorityByName("ROLE_USER")
+                .map(Role::getId)
+                .map(List::of)
+                .orElseThrow(AuthorityNotFoundException::new);
         CreateUserRequest user = new CreateUserRequest(req.username(), req.email(), req.password(), roles);
         userService.createUser(user);
         //if no error pushed to exception handler then user is created successfully

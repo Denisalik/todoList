@@ -83,35 +83,32 @@ public class UserService {
         }
     }
 
-    public User createUser(CreateUserRequest user) {
-        log.info("Creating User {}", user.username());
-        checkUserIntegrity(user.username(), user.email());
-        String hashedPassword = passwordEncoder.encode(user.password());
-        User createdUser = User.builder()
-                .username(user.username())
-                .email(user.email())
+    public User createUser(CreateUserRequest createUserRequest) {
+        log.info("Creating User {}", createUserRequest.username());
+        checkUserIntegrity(createUserRequest.username(), createUserRequest.email());
+        String hashedPassword = passwordEncoder.encode(createUserRequest.password());
+        User user = userRepository.save(User.builder()
+                .username(createUserRequest.username())
+                .email(createUserRequest.email())
                 .hashedPassword(hashedPassword)
                 .banned(false)
-                .build();
-        user.authorityIds().forEach(id -> addAuthority(createdUser, id));
-
-        User saved = userRepository.save(createdUser);
-        log.info("Successfully created User {}", saved.getUsername());
-        return saved;
+                .build()
+        );
+        log.info("Successfully created User {}", user.getUsername());
+        createUserRequest.authorityIds().forEach(id -> addAuthority(user, id));
+        return userRepository.save(user);
     }
 
-    public User updateUser(UpdateUserRequest user, Long userId) {
+    public User updateUser(UpdateUserRequest updateUserRequest, Long userId) {
         log.info("Updating User by id {}", userId);
-        User oldUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        checkUserIntegrity(oldUser.getUsername(), oldUser.getEmail());
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        checkUserIntegrity(user.getUsername(), user.getEmail());
 
-        Optional.ofNullable(user.email()).ifPresent(oldUser::setEmail);
-        Optional.ofNullable(user.banned()).ifPresent(oldUser::setBanned);
-        user.authorityIds().forEach(id -> addAuthority(oldUser, id));
-
-        User saved = userRepository.save(oldUser);
-        log.info("Successfully updated User {}", saved.getUsername());
-        return saved;
+        Optional.ofNullable(updateUserRequest.email()).ifPresent(user::setEmail);
+        Optional.ofNullable(updateUserRequest.banned()).ifPresent(user::setBanned);
+        updateUserRequest.authorityIds().forEach(id -> addAuthority(user, id));
+        log.info("Successfully updated User {}", user.getUsername());
+        return userRepository.save(user);
     }
     public void deleteUser(Long id) {
         log.info("Deleting User by id {}", id);

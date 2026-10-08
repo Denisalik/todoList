@@ -59,4 +59,3 @@ just generate
 # TODO
 - add normal status handling for openAPI, not global exception handling
 - add frontend
-- add testcontainers tests

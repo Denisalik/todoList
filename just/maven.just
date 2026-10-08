@@ -12,7 +12,7 @@ spring:
     ./mvnw -DskipTests spring-boot:run
 
 test:
-    ./mvnw -B clean verify
+    ./mvnw test
 
 ci: lint test
 

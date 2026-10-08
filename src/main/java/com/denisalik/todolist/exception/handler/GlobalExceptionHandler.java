@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends CommonGlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
-        return build(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {

@@ -5,6 +5,6 @@ public class UserNotFoundException extends RuntimeException {
         super("User not found");
     }
     public UserNotFoundException(Long id) {
-        super("User %s not found".formatted(id));
+        super("User not found with id: %s".formatted(id));
     }
 }

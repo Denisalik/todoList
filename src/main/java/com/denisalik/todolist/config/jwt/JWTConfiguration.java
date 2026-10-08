@@ -1,9 +1,11 @@
 package com.denisalik.todolist.config.jwt;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +18,7 @@ import java.util.Base64;
 @Component
 @ConfigurationProperties(prefix = "jwt")
 @Setter
+@Validated
 public class JWTConfiguration {
     /**
      * Default is 30 minutes in milliseconds
@@ -26,7 +29,10 @@ public class JWTConfiguration {
      */
     private long refreshTokenTtl = 86400000;
 
+    @NotNull
     private Resource publicKey;
+
+    @NotNull
     private Resource privateKey;
 
     // SUPPRESS CHECKSTYLE MethodName
