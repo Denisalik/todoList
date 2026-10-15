@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: main
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/agent-inject-secret-postgres.sh: "secret/data/postgres"
+        vault.hashicorp.com/agent-inject-template-postgres.sh: |
+          {{- with secret "secret/data/postgres" -}}
+          export PG_PASSWORD={{ .Data.data.POSTGRES_PASSWORD }}
+          export PG_USER={{ .Data.data.POSTGRES_USER }}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-secret-ai.sh: "secret/data/ai"
+        vault.hashicorp.com/agent-inject-template-ai.sh: |
+          {{- with secret "secret/data/ai" -}}
+          export OPENAI_API_KEY={{ .Data.data.OPENAI_API_KEY }}
+          {{- end }}
+        vault.hashicorp.com/role: "main-role"
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: denisalik/to-do-list-backend:latest
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - |
+              set -a
+              [ -f /vault/secrets/postgres.sh ] && . /vault/secrets/postgres.sh
+              [ -f /vault/secrets/ai.sh ] && . /vault/secrets/ai.sh
+              set +a
+              exec java -jar app.jar
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: "jdbc:postgresql://sql-service:5432/to_do"
+            - name: LOKI_URL
+              value: "http://loki-service:3100/loki/api/v1/push"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+                memory: "1Gi"
+                cpu: "1"
+      restartPolicy: Always
+      

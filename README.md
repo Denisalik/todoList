@@ -16,7 +16,10 @@ docker compose up
 ```
 ### Kubernetes
 ```shell
-#todo
+just create-cluster
+#check vault configuration if you are using cluster first time.
+#apply all k8s files
+just k8s-apply
 ```
 ### Raw
 ```shell
@@ -49,6 +52,49 @@ just
 ### Host URL works only if you change "expose" to "ports" in the docker-compose.yml file:
 expose: ["\<port\>"] --> ports: ["\<port\>:\<port\>"]
 
+## Vault configuration
+```shell
+#check if helm is installed and vault repos are added
+just check-helm
+
+#create vault namespace
+kubectl apply -f ./k8s/vault/
+
+#install vault in cluster
+just k8s-install-vault
+
+#connect to vault pod
+just enter-vault
+
+#create policy for reading secrets
+cat <<EOF > /home/vault/read-policy.hcl
+path "secret/data/*" {
+  capabilities = ["read"]
+}
+EOF
+vault policy write read-policy /home/vault/read-policy.hcl
+#create k8s auth for vault to communicate with k8s
+vault auth enable kubernetes
+vault write auth/kubernetes/config \
+   token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+   kubernetes_host=https://${KUBERNETES_PORT_443_TCP_ADDR}:443 \
+   kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+#create roles for above policy to vault account with namespace
+vault write auth/kubernetes/role/main-role \
+   bound_service_account_names=main-service-account \
+   bound_service_account_namespaces=main \
+   policies=read-policy \
+   ttl=1h
+vault write auth/kubernetes/role/obs-role \
+   bound_service_account_names=obs-service-account \
+   bound_service_account_namespaces=obs \
+   policies=read-policy \
+   ttl=1h
+#now you can add secrets:
+vault kv put secret/postgres POSTGRES_PASSWORD=POSTGRES_PASSWORD POSTGRES_USER=POSTGRES_USER
+vault kv put secret/ai OPENAI_API_KEY=<token>
+vault kv put secret/grafana GF_SECURITY_ADMIN_USER=admin GF_SECURITY_ADMIN_PASSWORD=grafana
+```
 ## Open-API code generation
 ```shell
 #Run your services

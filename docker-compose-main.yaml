@@ -16,6 +16,7 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: prod
+#      target: prod-without-loki
     environment:
       DB_URL: "jdbc:postgresql://sql:5432/to_do"
       PG_USER: "user"

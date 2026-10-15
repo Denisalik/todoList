@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sql-init-cm
+  namespace: main
+data:
+  init.sh: |
+    #!/bin/bash
+    set -e
+    [ -f /vault/secrets/postgres.sh ] && . /vault/secrets/postgres.sh
+    echo "Running init as user: $POSTGRES_USER"
+    psql -U "$POSTGRES_USER" -tc "SELECT 1 FROM pg_database WHERE datname = 'to_do'" | grep -q 1 || psql -U "$POSTGRES_USER" -c "CREATE DATABASE to_do"

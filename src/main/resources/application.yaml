@@ -33,6 +33,9 @@ springdoc:
     enabled: true
 
 management:
+  observations:
+    annotations:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -40,6 +43,15 @@ management:
   metrics:
     tags:
       application: todo-backend
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
 
 jwt:
   publicKey: classpath:rsa/public.pem

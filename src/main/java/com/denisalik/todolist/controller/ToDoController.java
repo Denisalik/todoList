@@ -6,6 +6,7 @@ import com.denisalik.todolist.entity.ToDoSuggestion;
 import com.denisalik.todolist.entity.User;
 import com.denisalik.todolist.service.ToDoService;
 import com.denisalik.todolist.service.ToDoSuggestionService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,7 +62,7 @@ public class ToDoController {
     @Operation(summary = "Update a todo item", description = "Updates an existing todo item, fields are non-nullable")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @toDoSecurity.isOwner(#id, authentication.name)")
-    public ResponseEntity<ToDoItem> update(@PathVariable Long id, @Valid @RequestBody ToDoItemRequest item, @AuthenticationPrincipal User user) {
+    public ResponseEntity<ToDoItem> update(@PathVariable Long id, @Valid @RequestBody ToDoItemRequest item) {
         ToDoItem updatedItem = toDoService.updateToDoItem(id, item);
         return ResponseEntity.ok(updatedItem);
     }
@@ -74,6 +75,7 @@ public class ToDoController {
         return ResponseEntity.noContent().build();
     }
 
+    @Timed(value = "todo.suggestion.generate", description = "Time taken to generate AI suggestion")
     @Operation(summary = "Generate or regenerate an AI suggestion for this todo")
     @Parameter(name = "id", description = "ToDo Item ID")
     @PostMapping("/suggestion/{id}")

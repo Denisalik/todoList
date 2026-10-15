@@ -24,3 +24,15 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+FROM deps AS build-without-loki
+WORKDIR /app
+COPY src/main ./src/main
+RUN rm /app/src/main/resources/logback-spring.xml
+RUN --mount=type=cache,target=/root/.m2 mvn -B -q clean package -DskipTests
+
+FROM deps AS prod-without-loki
+WORKDIR /app
+COPY src/main ./src/main
+RUN rm /app/src/main/resources/logback-spring.xml
+RUN --mount=type=cache,target=/root/.m2 mvn -B -q clean package -DskipTests

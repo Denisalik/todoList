@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grafana-ss
+  namespace: obs
+  labels:
+    app: grafana
+spec:
+  serviceName: grafana-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/agent-inject-secret-grafana.sh: "secret/data/grafana"
+        vault.hashicorp.com/agent-inject-template-grafana.sh: |
+          {{- with secret "secret/data/grafana" -}}
+          export GF_SECURITY_ADMIN_USER={{ .Data.data.GF_SECURITY_ADMIN_USER }}
+          export GF_SECURITY_ADMIN_PASSWORD={{ .Data.data.GF_SECURITY_ADMIN_PASSWORD }}
+          {{- end }}
+        vault.hashicorp.com/role: "obs-role"
+      labels:
+        app: grafana
+    spec:
+      serviceAccountName: obs-service-account
+      containers:
+        - name: grafana
+          image: grafana/grafana:13.2.3
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -a
+              [ -f /vault/secrets/grafana.sh ] && . /vault/secrets/grafana.sh
+              set +a
+              exec /run.sh
+          env:
+            - name: GF_USERS_ALLOW_SIGN_UP
+              value: "false"
+            - name: GF_SERVER_SERVE_FROM_SUB_PATH
+              value: "true"
+            - name: GF_SERVER_ROOT_URL
+              value: "%(protocol)s://%(domain)s/grafana/"
+          ports:
+            - name: http
+              containerPort: 3000
+          #todo check if I need dashboards volume as well?
+          volumeMounts:
+            - name: provisioning-datasources
+              mountPath: /etc/grafana/provisioning/datasources
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/grafana
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: provisioning-datasources
+          configMap:
+            name: grafana-cm
+            defaultMode: 0755
+      restartPolicy: Always
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
+  
