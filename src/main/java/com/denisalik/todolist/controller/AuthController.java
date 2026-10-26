@@ -3,6 +3,7 @@ package com.denisalik.todolist.controller;
 import com.denisalik.todolist.dto.req.LoginRequest;
 import com.denisalik.todolist.dto.req.RegisterRequest;
 import com.denisalik.todolist.dto.res.AccessTokenResponse;
+import com.denisalik.todolist.dto.res.GetMeResponse;
 import com.denisalik.todolist.entity.User;
 import com.denisalik.todolist.exception.UserNotAuthenticatedException;
 import com.denisalik.todolist.service.auth.AuthService;
@@ -59,8 +60,8 @@ public class AuthController {
 
     @Operation(summary = "Get current user", description = "Returns the current logged-in user(using access token)")
     @GetMapping("/me")
-    public ResponseEntity<User> me(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(user);
+    public ResponseEntity<GetMeResponse> me(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(GetMeResponse.fromUser(user));
     }
 
     @Operation(summary = "Get CSRF token", description = "Returns the CSRF token for the current session")

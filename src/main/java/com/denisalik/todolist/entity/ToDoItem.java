@@ -1,10 +1,10 @@
 package com.denisalik.todolist.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,10 +40,14 @@ public class ToDoItem {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @Column(nullable = false)
+    private Boolean selected;
+
     @OneToOne(mappedBy = "toDoItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private ToDoSuggestion answer;
 
     @CreatedBy

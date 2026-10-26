@@ -24,7 +24,9 @@ spec:
         vault.hashicorp.com/agent-inject-secret-ai.sh: "secret/data/ai"
         vault.hashicorp.com/agent-inject-template-ai.sh: |
           {{- with secret "secret/data/ai" -}}
-          export OPENAI_API_KEY={{ .Data.data.OPENAI_API_KEY }}
+          export AI_API_KEY={{ .Data.data.AI_API_KEY }}
+          export AI_BASE_URL={{ .Data.data.AI_BASE_URL }}
+          export AI_MODEL={{ .Data.data.AI_MODEL }}
           {{- end }}
         vault.hashicorp.com/role: "main-role"
       labels:

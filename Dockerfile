@@ -31,8 +31,13 @@ COPY src/main ./src/main
 RUN rm /app/src/main/resources/logback-spring.xml
 RUN --mount=type=cache,target=/root/.m2 mvn -B -q clean package -DskipTests
 
-FROM deps AS prod-without-loki
+FROM eclipse-temurin:25.0.4_7-jdk-jammy as prod-without-loki
 WORKDIR /app
-COPY src/main ./src/main
-RUN rm /app/src/main/resources/logback-spring.xml
-RUN --mount=type=cache,target=/root/.m2 mvn -B -q clean package -DskipTests
+
+RUN groupadd -r app && useradd -r -g app app
+USER app
+
+COPY --from=build-without-loki /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -92,7 +92,9 @@ vault write auth/kubernetes/role/obs-role \
    ttl=1h
 #now you can add secrets:
 vault kv put secret/postgres POSTGRES_PASSWORD=POSTGRES_PASSWORD POSTGRES_USER=POSTGRES_USER
-vault kv put secret/ai OPENAI_API_KEY=<token>
+vault kv put secret/ai AI_API_KEY=<token>
+vault kv put secret/ai AI_BASE_URL=<url>
+vault kv put secret/ai AI_MODEL=<model>
 vault kv put secret/grafana GF_SECURITY_ADMIN_USER=admin GF_SECURITY_ADMIN_PASSWORD=grafana
 ```
 ## Open-API code generation

@@ -1,6 +1,7 @@
 package com.denisalik.todolist.service;
 
-import com.denisalik.todolist.dto.req.ToDoItemRequest;
+import com.denisalik.todolist.dto.req.CreateToDoItemRequest;
+import com.denisalik.todolist.dto.req.UpdateToDoItemRequest;
 import com.denisalik.todolist.entity.ToDoItem;
 import com.denisalik.todolist.exception.ToDoItemNotFoundException;
 import com.denisalik.todolist.repository.ToDoItemRepository;
@@ -44,23 +45,25 @@ public class ToDoService {
                 .orElseThrow(() -> new ToDoItemNotFoundException(id));
     }
 
-    public ToDoItem createToDoItem(ToDoItemRequest item) {
+    public ToDoItem createToDoItem(CreateToDoItemRequest item) {
         log.info("Creating ToDo item {}", item.title());
         ToDoItem createdItem = ToDoItem
                 .builder()
                 .description(item.description())
                 .title(item.title())
+                .selected(false)
                 .build();
         ToDoItem saved = toDoRepository.save(createdItem);
         log.info("Successfully created ToDo item with id {}", saved.getId());
         return saved;
     }
 
-    public ToDoItem updateToDoItem(Long id, ToDoItemRequest updated) {
+    public ToDoItem updateToDoItem(Long id, UpdateToDoItemRequest updated) {
         log.info("Updating ToDo item by id {}", id);
 
         ToDoItem existing = getToDoItemByIdOrException(id);
 
+        Optional.ofNullable(updated.selected()).ifPresent(existing::setSelected);
         Optional.ofNullable(updated.title()).ifPresent(existing::setTitle);
         Optional.ofNullable(updated.description()).ifPresent(existing::setDescription);
 

@@ -1,6 +1,7 @@
 package com.denisalik.todolist.controller;
 
-import com.denisalik.todolist.dto.req.ToDoItemRequest;
+import com.denisalik.todolist.dto.req.CreateToDoItemRequest;
+import com.denisalik.todolist.dto.req.UpdateToDoItemRequest;
 import com.denisalik.todolist.entity.ToDoItem;
 import com.denisalik.todolist.entity.ToDoSuggestion;
 import com.denisalik.todolist.entity.User;
@@ -52,7 +53,7 @@ public class ToDoController {
 
     @Operation(summary = "Create a new todo item", description = "Creates a new todo item")
     @PostMapping
-    public ResponseEntity<ToDoItem> create(@Valid @RequestBody ToDoItemRequest item) {
+    public ResponseEntity<ToDoItem> create(@Valid @RequestBody CreateToDoItemRequest item) {
         ToDoItem createdItem = toDoService.createToDoItem(item);
         return ResponseEntity
                 .created(URI.create("/api/todos/" + createdItem.getId()))
@@ -62,7 +63,7 @@ public class ToDoController {
     @Operation(summary = "Update a todo item", description = "Updates an existing todo item, fields are non-nullable")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @toDoSecurity.isOwner(#id, authentication.name)")
-    public ResponseEntity<ToDoItem> update(@PathVariable Long id, @Valid @RequestBody ToDoItemRequest item) {
+    public ResponseEntity<ToDoItem> update(@PathVariable Long id, @Valid @RequestBody UpdateToDoItemRequest item) {
         ToDoItem updatedItem = toDoService.updateToDoItem(id, item);
         return ResponseEntity.ok(updatedItem);
     }

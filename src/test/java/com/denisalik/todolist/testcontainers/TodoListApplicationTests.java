@@ -97,7 +97,7 @@ class TodoListApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new RegisterRequest("bob", "bob@mail.ru", "password123"))
                 .exchange()
-                .expectStatus().isEqualTo(409); // adjust to your actual code
+                .expectStatus().isEqualTo(409);
     }
 
     // ---------- /auth/login ----------

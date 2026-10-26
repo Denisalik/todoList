@@ -1,7 +1,8 @@
 CREATE TABLE to_do_items (
     id            BIGSERIAL PRIMARY KEY,
     title         VARCHAR(255) NOT NULL,
-    description   VARCHAR(255) NOT NULL,
+    description   TEXT NOT NULL,
+    selected BOOLEAN NOT NULL DEFAULT FALSE,
 
     created_by    VARCHAR(100),
     created_date  TIMESTAMP,

@@ -60,6 +60,9 @@ public class UserService {
         user.getRoles().add(authority);
         log.info("Successfully added Authority {} to user {}", authority.getName(),  user.getUsername());
     }
+    public void addAuthorities(User user, List<Long> authorityIds) {
+        authorityIds.forEach(id -> addAuthority(user, id));
+    }
 
 
     @Transactional(readOnly = true)
@@ -95,7 +98,7 @@ public class UserService {
                 .build()
         );
         log.info("Successfully created User {}", user.getUsername());
-        createUserRequest.authorityIds().forEach(id -> addAuthority(user, id));
+        addAuthorities(user, createUserRequest.authorityIds());
         return userRepository.save(user);
     }
 
@@ -104,9 +107,15 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         checkUserIntegrity(user.getUsername(), user.getEmail());
 
-        Optional.ofNullable(updateUserRequest.email()).ifPresent(user::setEmail);
-        Optional.ofNullable(updateUserRequest.banned()).ifPresent(user::setBanned);
-        updateUserRequest.authorityIds().forEach(id -> addAuthority(user, id));
+        Optional.ofNullable(updateUserRequest.email())
+                .ifPresent(user::setEmail);
+        Optional.ofNullable(updateUserRequest.banned())
+                .ifPresent(user::setBanned);
+        Optional.ofNullable(updateUserRequest.password())
+                .map(passwordEncoder::encode)
+                .ifPresent(user::setHashedPassword);
+
+        addAuthorities(user, updateUserRequest.authorityIds());
         log.info("Successfully updated User {}", user.getUsername());
         return userRepository.save(user);
     }

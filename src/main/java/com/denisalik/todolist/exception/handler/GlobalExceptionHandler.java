@@ -1,6 +1,7 @@
 package com.denisalik.todolist.exception.handler;
 
 import com.denisalik.todolist.dto.res.ErrorResponse;
+import com.denisalik.todolist.exception.AuthorityNotFoundException;
 import com.denisalik.todolist.exception.EmailAlreadyExistsException;
 import com.denisalik.todolist.exception.RoleNameAlreadyExistsException;
 import com.denisalik.todolist.exception.ToDoItemNotFoundException;
@@ -66,5 +67,8 @@ public class GlobalExceptionHandler extends CommonGlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleToDoSuggestionNotFoundException(ToDoSuggestionNotFoundException ex) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
-
+    @ExceptionHandler(AuthorityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorityNotFoundException(AuthorityNotFoundException ex) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
 }

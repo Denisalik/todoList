@@ -1,5 +1,6 @@
 package com.denisalik.todolist.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -8,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -40,9 +40,9 @@ public class ToDoSuggestion {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "to_do_item_id", nullable = false, unique = true)
+    @JsonBackReference
     private ToDoItem toDoItem;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 

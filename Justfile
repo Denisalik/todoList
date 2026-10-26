@@ -2,6 +2,7 @@ import 'just/docker.just'
 import 'just/maven.just'
 import 'just/k8s.just'
 import 'just/generate.just'
+import 'just/frontend.just'
 
 default:
     @just --list
