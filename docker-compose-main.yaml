@@ -22,7 +22,9 @@ services:
       PG_USER: "user"
       PG_PASSWORD: "mypass"
       LOKI_URL: "http://loki:3100/loki/api/v1/push"
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      AI_API_KEY: ${AI_API_KEY}
+      AI_BASE_URL: ${AI_BASE_URL}
+      AI_MODEL: ${AI_MODEL}
 #    ports:
 #      - "8080:8080"
     expose:

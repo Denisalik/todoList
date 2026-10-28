@@ -1,27 +1,29 @@
-import {useEffect, useState} from 'react';
-import {HugeiconsIcon} from '@hugeicons/react';
 import {
-  Delete02Icon,
-  PencilEdit01Icon,
+  Cancel01Icon,
   CheckmarkCircle02Icon,
   CircleIcon,
+  Delete02Icon,
+  Loading03Icon,
+  PencilEdit01Icon,
+  SparklesIcon,
   Tick02Icon,
-  Cancel01Icon, SparklesIcon, Loading03Icon,
 } from '@hugeicons/core-free-icons';
-import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
-import type {ToDoItem as ToDoItemType} from "@/generated/model";
-import {toDoContextActions} from "@/providers/toDoList.ts";
-import {showMessage} from "@/providers/message.ts";
-import type * as React from "react";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
+import { HugeiconsIcon } from '@hugeicons/react';
+import type * as React from 'react';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
+import type { ToDoItem as ToDoItemType } from '@/generated/model';
+import { showMessage } from '@/providers/message.ts';
+import { toDoContextActions } from '@/providers/toDoList.ts';
 
 interface ToDoItemProps {
   todo: ToDoItemType;
   loading: boolean;
 }
 
-export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
+export const ToDoItem: React.FC<ToDoItemProps> = ({ todo, loading }) => {
   const [editing, setEditing] = useState(false);
   const [updatedTitle, setUpdatedTitle] = useState(todo.title);
   const [updatedDescription, setUpdatedDescription] = useState<string>(todo.description ?? '');
@@ -41,23 +43,29 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
     setEditing(false);
     await toDoContextActions.deleteItem(todo.id!);
     showMessage.success('Deleted ToDo Item');
-  }
+  };
   const generateAnswer = async () => {
     setEditing(false);
     await toDoContextActions.suggestItem(todo.id!);
     showMessage.success('Generate todo Answer');
-  }
+  };
+  // biome-ignore lint/correctness/useExhaustiveDependencies(save): save is recreated every render, adding it causes infinite loop
   useEffect(() => {
-    if(updatedSelected === todo.selected)return;
+    if (updatedSelected === todo.selected) return;
     save();
-  }, [updatedSelected]);
+  }, [updatedSelected, todo.selected]);
 
-  const liClassName = "group flex items-center gap-3 rounded-lg border bg-card px-3 py-2 transition hover:shadow-sm";
+  const liClassName =
+    'group flex items-center gap-3 rounded-lg border bg-card px-3 py-2 transition hover:shadow-sm';
 
   return loading ? (
     <li className={liClassName}>
       <div className="flex w-full items-center justify-center py-1">
-        <HugeiconsIcon icon={Loading03Icon} size={22} className="shrink-0 animate-spin text-primary" />
+        <HugeiconsIcon
+          icon={Loading03Icon}
+          size={22}
+          className="shrink-0 animate-spin text-primary"
+        />
       </div>
     </li>
   ) : (
@@ -65,13 +73,10 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
       <button
         type="button"
         onClick={() => setUpdatedSelected(!updatedSelected)}
-        className="shrink-0 transition-colors hover:text-primary text-primary"
+        className="shrink-0 text-primary transition-colors hover:text-primary"
         aria-label={updatedSelected ? 'Mark as not done' : 'Mark as done'}
       >
-        <HugeiconsIcon
-          icon={updatedSelected ? CheckmarkCircle02Icon : CircleIcon}
-          size={22}
-        />
+        <HugeiconsIcon icon={updatedSelected ? CheckmarkCircle02Icon : CircleIcon} size={22} />
       </button>
 
       <div className="min-w-0 flex-1">
@@ -103,7 +108,7 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
               }}
             />
             <Button size="icon" variant="ghost" onClick={save}>
-              <HugeiconsIcon icon={Tick02Icon} size={18}/>
+              <HugeiconsIcon icon={Tick02Icon} size={18} />
             </Button>
             <Button
               size="icon"
@@ -114,20 +119,20 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
                 setEditing(false);
               }}
             >
-              <HugeiconsIcon icon={Cancel01Icon} size={18}/>
+              <HugeiconsIcon icon={Cancel01Icon} size={18} />
             </Button>
           </div>
         ) : (
           <>
-            <p className="whitespace-pre-wrap break-words text-sm font-semibold text-black">
+            <p className="whitespace-pre-wrap break-words font-semibold text-black text-sm">
               {updatedTitle}
             </p>
-            <p className="mt-1 whitespace-pre-wrap break-words text-xs text-foreground">
+            <p className="mt-1 whitespace-pre-wrap break-words text-foreground text-xs">
               {updatedDescription}
             </p>
             {todo.answer && (
-              <div className="mt-2 rounded-md border-l-2 border-muted bg-muted/40 px-3 py-2">
-                <p className="whitespace-pre-wrap break-words text-xs leading-relaxed text-foreground">
+              <div className="mt-2 rounded-md border-muted border-l-2 bg-muted/40 px-3 py-2">
+                <p className="whitespace-pre-wrap break-words text-foreground text-xs leading-relaxed">
                   {todo.answer.content}
                 </p>
               </div>
@@ -138,45 +143,47 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
 
       <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
         <Tooltip>
-          <TooltipTrigger render={
-                             <Button size="icon"
-                                     variant="ghost"
-                                     onClick={generateAnswer}
-                                     aria-label="Generate with AI"
-                            >
-                              <HugeiconsIcon icon={SparklesIcon} size={16}/>
-                            </Button>
-                          }/>
+          <TooltipTrigger
+            render={
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={generateAnswer}
+                aria-label="Generate with AI"
+              >
+                <HugeiconsIcon icon={SparklesIcon} size={16} />
+              </Button>
+            }
+          />
           <TooltipContent>
             <p>Generate what to do</p>
           </TooltipContent>
         </Tooltip>
         <Tooltip>
-          <TooltipTrigger render={
-                             <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => setEditing(true)}
-                              aria-label="Edit"
-                            >
-                              <HugeiconsIcon icon={PencilEdit01Icon} size={16}/>
-                            </Button>
-                          }/>
+          <TooltipTrigger
+            render={
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setEditing(true)}
+                aria-label="Edit"
+              >
+                <HugeiconsIcon icon={PencilEdit01Icon} size={16} />
+              </Button>
+            }
+          />
           <TooltipContent>
             <p>Edit to do</p>
           </TooltipContent>
         </Tooltip>
         <Tooltip>
-          <TooltipTrigger render={
-                             <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={deleteItem}
-                              aria-label="Delete"
-                            >
-                              <HugeiconsIcon icon={Delete02Icon} size={16} className="text-destructive"/>
-                            </Button>
-                          }/>
+          <TooltipTrigger
+            render={
+              <Button size="icon" variant="ghost" onClick={deleteItem} aria-label="Delete">
+                <HugeiconsIcon icon={Delete02Icon} size={16} className="text-destructive" />
+              </Button>
+            }
+          />
           <TooltipContent>
             <p>Remove to do</p>
           </TooltipContent>
@@ -184,4 +191,4 @@ export const ToDoItem: React.FC<ToDoItemProps> = ({todo, loading}) => {
       </div>
     </li>
   );
-}
+};

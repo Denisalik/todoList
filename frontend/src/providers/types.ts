@@ -1,4 +1,4 @@
-import type {GetMeResponse, ToDoItem, ToDoSuggestion, User} from "@/generated/model";
+import type { GetMeResponse, ToDoItem, ToDoSuggestion, User } from '@/generated/model';
 
 export interface IsLoadingItem {
   id: number;
@@ -31,25 +31,25 @@ export interface StoreState {
 }
 
 export enum AllActionsEnum {
-  LOGIN = "LOGIN",
-  REGISTER = "REGISTER",
-  LOGOUT = "LOGOUT",
-  ME = "ME",
-  REFRESH = "REFRESH",
+  LOGIN = 'LOGIN',
+  REGISTER = 'REGISTER',
+  LOGOUT = 'LOGOUT',
+  ME = 'ME',
+  REFRESH = 'REFRESH',
 
-  AUTH_LOADING = "AUTH_LOADING",
-  TODO_LOADING = "TODO_LOADING",
-  TODO_ID_LOADING = "TODO_ID_LOADING",
-  ADMIN_LOADING = "ADMIN_LOADING",
-  ALL_LOADING = "ALL_LOADING",
+  AUTH_LOADING = 'AUTH_LOADING',
+  TODO_LOADING = 'TODO_LOADING',
+  TODO_ID_LOADING = 'TODO_ID_LOADING',
+  ADMIN_LOADING = 'ADMIN_LOADING',
+  ALL_LOADING = 'ALL_LOADING',
 
-  GET_TODO_LIST = "GET_TODO_LIST",
-  ADD_TODO_ITEM = "ADD_TODO_ITEM",
-  UPDATE_TODO_ITEM = "UPDATE_TODO_ITEM",
-  DELETE_TODO_ITEM = "DELETE_TODO_ITEM",
-  SUGGEST_TODO_ITEM = "SUGGEST_TODO_ITEM",
+  GET_TODO_LIST = 'GET_TODO_LIST',
+  ADD_TODO_ITEM = 'ADD_TODO_ITEM',
+  UPDATE_TODO_ITEM = 'UPDATE_TODO_ITEM',
+  DELETE_TODO_ITEM = 'DELETE_TODO_ITEM',
+  SUGGEST_TODO_ITEM = 'SUGGEST_TODO_ITEM',
 
-  GET_USERS = "GET_USERS",
+  GET_USERS = 'GET_USERS',
 }
 type OptionalAuthState = Partial<AuthState>;
 type OptionalAdminState = Partial<AdminState>;
@@ -66,7 +66,7 @@ export type AuthActions =
   | { type: AllActionsEnum.REGISTER; payload: OptionalAuthState }
   | { type: AllActionsEnum.LOGOUT; payload: OptionalAuthState }
   | { type: AllActionsEnum.ME; payload: OptionalAuthState }
-  | { type: AllActionsEnum.REFRESH; payload: OptionalAuthState};
+  | { type: AllActionsEnum.REFRESH; payload: OptionalAuthState };
 
 export type ToDoActions =
   | { type: AllActionsEnum.GET_TODO_LIST; payload: ToDoListState }
@@ -74,18 +74,18 @@ export type ToDoActions =
   | { type: AllActionsEnum.UPDATE_TODO_ITEM; payload: ToDoListState };
 
 export type LoadingActions =
-  | { type: AllActionsEnum.AUTH_LOADING; payload: boolean}
-  | { type: AllActionsEnum.TODO_LOADING; payload: boolean}
-  | { type: AllActionsEnum.TODO_ID_LOADING; payload: IsLoadingItem}
-  | { type: AllActionsEnum.ADMIN_LOADING; payload: boolean}
-  | { type: AllActionsEnum.ALL_LOADING; payload: boolean};
+  | { type: AllActionsEnum.AUTH_LOADING; payload: boolean }
+  | { type: AllActionsEnum.TODO_LOADING; payload: boolean }
+  | { type: AllActionsEnum.TODO_ID_LOADING; payload: IsLoadingItem }
+  | { type: AllActionsEnum.ADMIN_LOADING; payload: boolean }
+  | { type: AllActionsEnum.ALL_LOADING; payload: boolean };
 
 export type Actions =
   | AuthActions
   | ToDoActions
   | LoadingActions
-  | { type: AllActionsEnum.GET_USERS; payload: OptionalAdminState}
-  | { type: AllActionsEnum.DELETE_TODO_ITEM; payload: number}
+  | { type: AllActionsEnum.GET_USERS; payload: OptionalAdminState }
+  | { type: AllActionsEnum.DELETE_TODO_ITEM; payload: number }
   | { type: AllActionsEnum.SUGGEST_TODO_ITEM; payload: SuggestionPayload };
 
 export interface AuthMutations {

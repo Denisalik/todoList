@@ -1,6 +1,6 @@
-import {api} from "./api.ts";
-import {type Actions, AllActionsEnum, type AuthActions, type AuthMutations} from "./types.ts";
-import {useStore} from "./store.ts";
+import { api } from './api.ts';
+import { useStore } from './store.ts';
+import { type Actions, AllActionsEnum, type AuthActions, type AuthMutations } from './types.ts';
 
 //using interceptors(./api.ts) if status is not 200/201
 export const authContextActions: AuthMutations = {
@@ -9,7 +9,7 @@ export const authContextActions: AuthMutations = {
       type: AllActionsEnum.AUTH_LOADING,
       payload: true,
     });
-    const {data, status} = await api.login({username, password});
+    const { data, status } = await api.login({ username, password });
     if (status === 201) {
       const payload = {
         token: data.accessToken,
@@ -17,7 +17,7 @@ export const authContextActions: AuthMutations = {
         isAuthenticated: true,
         isLoading: false,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.LOGIN, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.LOGIN, payload });
     }
   },
   register: async (username: string, email: string, password: string) => {
@@ -25,7 +25,7 @@ export const authContextActions: AuthMutations = {
       type: AllActionsEnum.AUTH_LOADING,
       payload: true,
     });
-    const {data, status} = await api.registration({username, email, password});
+    const { data, status } = await api.registration({ username, email, password });
     if (status === 201) {
       const payload = {
         token: data.accessToken,
@@ -33,18 +33,18 @@ export const authContextActions: AuthMutations = {
         isAuthenticated: true,
         isLoading: false,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.REGISTER, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.REGISTER, payload });
     }
   },
-  refresh: async() => {
-    const {data, status} = await api.refresh();
+  refresh: async () => {
+    const { data, status } = await api.refresh();
     if (status === 200) {
       const payload = {
         token: data.accessToken,
         error: undefined,
         isAuthenticated: true,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.REFRESH, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.REFRESH, payload });
     }
   },
   me: async () => {
@@ -52,7 +52,7 @@ export const authContextActions: AuthMutations = {
       type: AllActionsEnum.AUTH_LOADING,
       payload: true,
     });
-    const {data, status} = await api.me();
+    const { data, status } = await api.me();
     if (status === 200) {
       const payload = {
         user: data,
@@ -60,7 +60,7 @@ export const authContextActions: AuthMutations = {
         isAuthenticated: true,
         isLoading: false,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.ME, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.ME, payload });
     }
   },
   logout: () => {
@@ -70,9 +70,9 @@ export const authContextActions: AuthMutations = {
       error: undefined,
       isLoading: false,
     };
-    useStore.getState().dispatch({type: AllActionsEnum.LOGOUT, payload});
-  }
-}
+    useStore.getState().dispatch({ type: AllActionsEnum.LOGOUT, payload });
+  },
+};
 const AUTH_ACTIONS = [
   AllActionsEnum.LOGIN,
   AllActionsEnum.REGISTER,

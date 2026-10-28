@@ -1,6 +1,6 @@
-import {AllActionsEnum, type AdminMutations} from "@/providers/types.ts";
-import {useStore} from "@/providers/store.ts";
-import {api} from "@/providers/api.ts";
+import { api } from '@/providers/api.ts';
+import { useStore } from '@/providers/store.ts';
+import { type AdminMutations, AllActionsEnum } from '@/providers/types.ts';
 
 export const adminContextActions: AdminMutations = {
   getUsers: async () => {
@@ -8,14 +8,14 @@ export const adminContextActions: AdminMutations = {
       type: AllActionsEnum.ADMIN_LOADING,
       payload: true,
     });
-    const {data, status} = await api.getUsers();
+    const { data, status } = await api.getUsers();
     if (status === 200) {
       const payload = {
         users: data,
         error: undefined,
         isLoading: false,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.GET_USERS, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.GET_USERS, payload });
     }
   },
-}
+};

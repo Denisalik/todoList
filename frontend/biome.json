@@ -12,7 +12,10 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
+      "a11y": {
+        "noLabelWithoutControl": "off"
+      },
       "nursery": {
         "useSortedClasses": "warn"
       },
@@ -26,7 +29,7 @@
       "style": {
         "useImportType": "error",
         "useConst": "warn",
-        "noNonNullAssertion": "warn"
+        "noNonNullAssertion": "off"
       }
     }
   },

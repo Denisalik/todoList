@@ -1,12 +1,12 @@
+import { api } from '@/providers/api.ts';
+import { useStore } from '@/providers/store.ts';
 import {
   type Actions,
   AllActionsEnum,
   type ToDoActions,
   type ToDoMutations,
-  type UpdateItemPayload
-} from "@/providers/types.ts";
-import {useStore} from "@/providers/store.ts";
-import {api} from "@/providers/api.ts";
+  type UpdateItemPayload,
+} from '@/providers/types.ts';
 
 export const toDoContextActions: ToDoMutations = {
   getList: async () => {
@@ -14,14 +14,14 @@ export const toDoContextActions: ToDoMutations = {
       type: AllActionsEnum.TODO_LOADING,
       payload: true,
     });
-    const {data, status} = await api.getAll();
+    const { data, status } = await api.getAll();
     if (status === 200) {
       const payload = {
         list: data,
         error: undefined,
         isLoading: false,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.GET_TODO_LIST, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.GET_TODO_LIST, payload });
     }
   },
   addItem: async (title: string, description: string) => {
@@ -29,25 +29,22 @@ export const toDoContextActions: ToDoMutations = {
       type: AllActionsEnum.TODO_LOADING,
       payload: true,
     });
-    const {data, status} = await api.create({title, description});
+    const { data, status } = await api.create({ title, description });
     if (status === 201) {
       const payload = {
         list: [data],
         error: undefined,
         isLoading: false,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.ADD_TODO_ITEM, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.ADD_TODO_ITEM, payload });
     }
   },
-  updateItem: async (
-    id: number,
-    payload: UpdateItemPayload,
-  ) => {
+  updateItem: async (id: number, payload: UpdateItemPayload) => {
     useStore.getState().dispatch({
       type: AllActionsEnum.TODO_ID_LOADING,
-      payload: {id},
+      payload: { id },
     });
-    const {data, status} = await api.update(id, payload);
+    const { data, status } = await api.update(id, payload);
     if (status === 200) {
       const payload = {
         list: [data],
@@ -55,7 +52,7 @@ export const toDoContextActions: ToDoMutations = {
         isLoading: useStore.getState().toDoList.isLoading,
         isLoadingItem: undefined,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.UPDATE_TODO_ITEM, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.UPDATE_TODO_ITEM, payload });
     }
   },
   deleteItem: async (id: number) => {
@@ -63,17 +60,17 @@ export const toDoContextActions: ToDoMutations = {
       type: AllActionsEnum.TODO_LOADING,
       payload: true,
     });
-    const {status} = await api._delete(id);
+    const { status } = await api._delete(id);
     if (status === 204) {
-      useStore.getState().dispatch({type: AllActionsEnum.DELETE_TODO_ITEM, payload: id});
+      useStore.getState().dispatch({ type: AllActionsEnum.DELETE_TODO_ITEM, payload: id });
     }
   },
-  suggestItem: async(id: number) => {
+  suggestItem: async (id: number) => {
     useStore.getState().dispatch({
       type: AllActionsEnum.TODO_ID_LOADING,
-      payload: {id},
+      payload: { id },
     });
-    const {data, status} = await api.generateSuggestion(id);
+    const { data, status } = await api.generateSuggestion(id);
     if (status === 200) {
       const payload = {
         id,
@@ -81,10 +78,10 @@ export const toDoContextActions: ToDoMutations = {
         isLoadingItem: undefined,
         error: undefined,
       };
-      useStore.getState().dispatch({type: AllActionsEnum.SUGGEST_TODO_ITEM, payload});
+      useStore.getState().dispatch({ type: AllActionsEnum.SUGGEST_TODO_ITEM, payload });
     }
   },
-}
+};
 
 const TODO_ACTIONS = [
   AllActionsEnum.GET_TODO_LIST,

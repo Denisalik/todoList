@@ -6,11 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome lint .",
     "preview": "vite preview",
-    "lint:fix": "biome lint --write .",
-    "format": "biome format --write .",
-    "check": "biome check --write ."
+    "lint": "biome lint .",
+    "fix": "biome check --write --unsafe ."
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

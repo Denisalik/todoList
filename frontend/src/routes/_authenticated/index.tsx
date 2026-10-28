@@ -1,20 +1,20 @@
-import {createFileRoute} from "@tanstack/react-router"
-import {useStore} from "@/providers/store.ts";
+import { createFileRoute } from '@tanstack/react-router';
+import { useStore } from '@/providers/store.ts';
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute('/_authenticated/')({
   component: HomePage,
-})
+});
 
 function HomePage() {
-  const user = useStore(state => state.authentication.user);
+  const user = useStore((state) => state.authentication.user);
   return (
     <div className="space-y-4">
-      <h1 className="text-4xl font-bold">To Do List Application</h1>
+      <h1 className="font-bold text-4xl">To Do List Application</h1>
       <p className="text-3xl">Welcome {user?.username ?? 'Unknown'}!</p>
-      <br/>
+      <br />
       <p className="text-muted-foreground">
         It was created using React + TypeScript + TanStack + shadcn/ui + Tailwind
       </p>
     </div>
-  )
+  );
 }
