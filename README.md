@@ -104,6 +104,3 @@ just start
 #curl openapi.json and generate code using docker run orval
 just generate
 ```
-# TODO
-- add normal status handling for openAPI, not global exception handling
-- add frontend
